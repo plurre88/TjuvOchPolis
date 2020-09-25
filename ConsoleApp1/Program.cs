@@ -21,7 +21,6 @@ namespace ConsoleApp1
                     MovePerson(person);
                 }
                 Thread.Sleep(150);
-                //Console.ReadKey();
                 Console.Clear();
             }
         }
@@ -29,12 +28,12 @@ namespace ConsoleApp1
         {
             List<Person> town = new List<Person>();
 
-            town.Add(new Citizen("C",new Position(30,15),new Direction(-1,-1), new List<Item>()));
-            town.Add(new Citizen("C", new Position(10, 5), new Direction(-1, 0), new List<Item>()));
-            town.Add(new Police("P",new Position(5, 20),new Direction(1,1), new List<Item>()));
-            town.Add(new Police("P", new Position(69, 1), new Direction(1,0), new List<Item>()));
-            town.Add(new Thief("T",new Position(85,20),new Direction(1,-1), new List<Item>()));
-            town.Add(new Thief("T", new Position(4, 3), new Direction(1, -1), new List<Item>()));
+            town.Add(new Citizen("C",new Position(30,15),new Direction(-1,-1)));
+            town.Add(new Citizen("C", new Position(10, 5), new Direction(-1, 0)));
+            town.Add(new Police("P",new Position(5, 20),new Direction(1,1)));
+            town.Add(new Police("P", new Position(69, 1), new Direction(1,0)));
+            town.Add(new Thief("T",new Position(85,20),new Direction(1,-1)));
+            town.Add(new Thief("T", new Position(4, 3), new Direction(1, -1)));
 
             return town;
         }
@@ -79,31 +78,34 @@ namespace ConsoleApp1
     {
         public List<Item> inventory { get; set; }
 
-        public Citizen(string name, Position Pxy, Direction Dxy, List<Item> inventory) : base(name, Pxy, Dxy)
+        public Citizen(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
-            inventory.Add(new Item("Keys"));
-            inventory.Add(new Item("Phone"));
-            inventory.Add(new Item("Watch"));
-            inventory.Add(new Item("Cash"));
-            inventory.Add(new Item("Wallet"));
+            List<Item> StarterPack = new List<Item>();
+            StarterPack.Add(new Item("Keys"));
+            StarterPack.Add(new Item("Phone"));
+            StarterPack.Add(new Item("Watch"));
+            StarterPack.Add(new Item("Cash"));
+            StarterPack.Add(new Item("Wallet"));
+
+            inventory = StarterPack;
         }
     }
     class Police : Person
     {
         public List<Item> confiscated { get; set; }
 
-        public Police(string name, Position Pxy, Direction Dxy, List<Item> confiscated) : base(name, Pxy, Dxy)
+        public Police(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
-
+            List<Item> confiscated = new List<Item>();
         }
     }
     class Thief : Person
     {
         public List<Item> loot { get; set; }
 
-        public Thief(string name, Position Pxy, Direction Dxy, List<Item> loot) : base(name, Pxy, Dxy)
+        public Thief(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
-
+            List<Item> loot = new List<Item>();
         }
     }
     class Item
