@@ -10,7 +10,8 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            var town = CreateTown();
+            Random random = new Random();
+            var town = CreateTown(random);
 
             while (true)
             {
@@ -24,18 +25,46 @@ namespace ConsoleApp1
                 Console.Clear();
             }
         }
-        private static List<Person> CreateTown()
+        private static List<Person> CreateTown(Random random)
         {
+            int numberOfCitizen = 13;
+            int numberOfPolice = 13;
+            int numberOfThief = 13;
+
             List<Person> town = new List<Person>();
 
-            town.Add(new Citizen("C",new Position(30,15),new Direction(-1,-1)));
-            town.Add(new Citizen("C", new Position(10, 5), new Direction(-1, 0)));
-            town.Add(new Police("P",new Position(5, 20),new Direction(1,1)));
-            town.Add(new Police("P", new Position(69, 1), new Direction(1,0)));
-            town.Add(new Thief("T",new Position(85,20),new Direction(1,-1)));
-            town.Add(new Thief("T", new Position(4, 3), new Direction(1, -1)));
+            for (int i = 0; i < numberOfCitizen; i++)
+            {
+                town.Add(new Citizen("C", StarterPosition(random), GiveDirection(random)));
+            }
+
+            for (int i = 0; i < numberOfPolice; i++)
+            {
+                town.Add(new Police("P", StarterPosition(random), GiveDirection(random)));
+            }
+
+            for (int i = 0; i < numberOfThief; i++)
+            {
+                town.Add(new Thief("T", StarterPosition(random), GiveDirection(random)));
+            }
 
             return town;
+        }
+        private static Position StarterPosition(Random random)
+        {
+            return new Position(random.Next(0, 101), random.Next(0, 26));
+        }
+        private static Direction GiveDirection(Random random)
+        {
+            int rndX;
+            int rndY;
+            do
+            {
+                rndX = random.Next(-1, 2);
+                rndY = random.Next(-1, 2);
+            }
+            while (rndX == 0 && rndY == 0);
+            return new Direction(rndX, rndY);
         }
         private static void MovePerson(Person person)
         {
