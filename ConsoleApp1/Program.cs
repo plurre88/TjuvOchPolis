@@ -19,17 +19,73 @@ namespace ConsoleApp1
                 {
                     Console.SetCursorPosition(person.position.x, person.position.y);
                     Console.WriteLine(person.name);
+
+                }
+
+                Collision(town);
+
+                foreach (var person in town)
+                {
                     MovePerson(person);
                 }
+
                 Thread.Sleep(150);
                 Console.Clear();
             }
         }
+        private static void Collision(List<Person>town)
+        {
+            foreach (var personOne in town)
+            {
+                foreach (var personTwo in town)
+                {
+                    if (!personOne.Equals(personTwo))
+                    {
+                        if (personOne.position.x == personTwo.position.x && personOne.position.y == personTwo.position.y)
+                        {
+                            if (personOne is Thief && personTwo is Citizen)
+                            {
+                                var copyOfInventory = personTwo.CopyInventory();
+
+                                if (copyOfInventory.Count > 0)
+                                {
+                                    var stolenItem = copyOfInventory[0];
+                                    personOne.AddItem(stolenItem);
+                                    personTwo.RemoveItem(stolenItem);
+                                    Console.SetCursorPosition(0, 27);
+                                    Console.WriteLine("Polis krockar med tjuv");
+                                    Thread.Sleep(1750);
+                                }
+                            }
+                            else if (personOne is Police && personTwo is Thief)
+                            {
+                                var copyOfInventory = personTwo.CopyInventory();
+
+                                if (copyOfInventory.Count > 0)
+                                {
+                                    for (int i = 0; i < copyOfInventory.Count; i++)
+                                    {
+                                        personOne.AddItem(copyOfInventory[i]);
+                                    }
+                                    for (int i = 0; i < copyOfInventory.Count; i++)
+                                    {
+                                        personTwo.RemoveItem(copyOfInventory[i]);
+                                    }
+                                    Console.SetCursorPosition(0, 27);
+                                    Console.WriteLine("Polis krockar med tjuv");
+                                    Thread.Sleep(1750);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         private static List<Person> CreateTown(Random random)
         {
-            int numberOfCitizen = 13;
-            int numberOfPolice = 13;
-            int numberOfThief = 13;
+            int numberOfCitizen = 3;
+            int numberOfPolice = 3;
+            int numberOfThief = 3;
 
             List<Person> town = new List<Person>();
 
@@ -102,6 +158,18 @@ namespace ConsoleApp1
             position = Pxy;
             direction = Dxy;
         }
+        public virtual List<Item> CopyInventory()
+        {
+            return null;
+        }
+        public virtual void AddItem(Item item)
+        {
+
+        }
+        public virtual void RemoveItem(Item item)
+        {
+
+        }
     }
     class Citizen : Person
     {
@@ -118,6 +186,18 @@ namespace ConsoleApp1
 
             inventory = StarterPack;
         }
+        public override List<Item> CopyInventory()
+        {
+            return new List<Item>(inventory);
+        }
+        public override void AddItem(Item item)
+        {
+            inventory.Add(item);
+        }
+        public override void RemoveItem(Item item)
+        {
+            inventory.Remove(item);
+        }
     }
     class Police : Person
     {
@@ -127,6 +207,14 @@ namespace ConsoleApp1
         {
             List<Item> confiscated = new List<Item>();
         }
+        public override void AddItem(Item item)
+        {
+            confiscated.Add(item);
+        }
+        public override void RemoveItem(Item item)
+        {
+            confiscated.Remove(item);
+        }
     }
     class Thief : Person
     {
@@ -135,6 +223,18 @@ namespace ConsoleApp1
         public Thief(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
             List<Item> loot = new List<Item>();
+        }
+        public override List<Item> CopyInventory()
+        {
+            return new List<Item>(loot);
+        }
+        public override void AddItem(Item item)
+        {
+            loot.Add(item);
+        }
+        public override void RemoveItem(Item item)
+        {
+            loot.Remove(item);
         }
     }
     class Item
