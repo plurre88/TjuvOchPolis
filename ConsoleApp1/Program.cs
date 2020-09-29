@@ -13,47 +13,63 @@ namespace ConsoleApp1
             Random random = new Random();
             var town = CreateTown(random);
             List<Person> prison = new List<Person>();
+            var numberInPrison = 0;
 
             while (true)
             {
                 foreach (var person in town)
                 {
-                    Console.SetCursorPosition(person.position.x, person.position.y);
-                    Console.WriteLine(person.name);
+                    if (!person.inPrison)
+                    {
+                        Console.SetCursorPosition(person.position.x, person.position.y);
+                        Console.WriteLine(person.name);
+                    }
 
                 }
 
-                Collision(town, prison);
+                Collision(town, prison, numberInPrison);
 
                 foreach (var personInPrison in prison)
                 {
                     var personPrisonTime = personInPrison.GetTimeInPrison();
 
-                    if (personPrisonTime < 15)
+                    if (personInPrison.inPrison)
                     {
-                        Console.WriteLine($"Time in prison {personPrisonTime * 2} sekunder.");
-                        personInPrison.AddTimeInPrison();
-                        Thread.Sleep(250);
-                    }
-                    else
-                    {
-                        Console.SetCursorPosition(0, 27);
-                        Console.WriteLine("Thife are now free from prison.");
-                        town.Add(personInPrison);
-                        prison.Remove(personInPrison);
+                        if (personPrisonTime < 15)
+                        {
+                            Console.SetCursorPosition(0, 27);
+                            Console.WriteLine($"Prison:{numberInPrison}");
+                            Console.WriteLine($"Time in prison {personPrisonTime * 2} sekunder.");
+                            personInPrison.AddTimeInPrison();
+                            Thread.Sleep(250);
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(0, 27);
+                            Console.WriteLine("Thife are now free from prison.");
+                            personInPrison.inPrison = false;
+                            personInPrison.ResetTimeInPrison();
+                        }
                     }
                 }
-
+                numberInPrison = 0;
                 foreach (var person in town)
                 {
-                    MovePerson(person);
+                    if (!person.inPrison)
+                    {
+                        MovePerson(person);
+                    }
+                    else if (person.inPrison)
+                    {
+                        numberInPrison++;
+                    }
                 }
 
                 Thread.Sleep(150);
                 Console.Clear();
             }
         }
-        private static void Collision(List<Person>town , List<Person>prison)
+        private static void Collision(List<Person>town , List<Person>prison, int numberInPrison)
         {
             bool collision = false;
 
@@ -94,7 +110,7 @@ namespace ConsoleApp1
                                         personTwo.RemoveItem(copyOfInventory[i]);
                                     }
                                     prison.Add(personTwo);
-                                    town.Remove(personTwo);
+                                    personTwo.inPrison = true;
                                     Console.SetCursorPosition(0, 27);
                                     Console.WriteLine("Police put a thief in to prison!");
                                     collision = true;
@@ -127,7 +143,7 @@ namespace ConsoleApp1
                 }
 
                 Console.SetCursorPosition(0, 28);
-                Console.WriteLine($"Prison:{prison.Count}");
+                Console.WriteLine($"Prison:{numberInPrison}");
                 Console.WriteLine($"Citizen:{citItems}");
                 Console.WriteLine($"Thief:{thiefItems}");
                 Console.WriteLine($"Police:{policeItems}");
@@ -205,12 +221,14 @@ namespace ConsoleApp1
         public string name { get; set; }
         public Position position { get; set; }
         public Direction direction { get; set; }
+        public bool inPrison { get; set; }
 
         public Person(string name, Position Pxy, Direction Dxy)
         {
             this.name = name;
             position = Pxy;
             direction = Dxy;
+            inPrison = false;
         }
         public virtual List<Item> CopyInventory()
         {
@@ -233,6 +251,10 @@ namespace ConsoleApp1
             return 0;
         }
         public virtual void AddTimeInPrison()
+        {
+
+        }
+        public virtual void ResetTimeInPrison()
         {
 
         }
@@ -323,6 +345,10 @@ namespace ConsoleApp1
         public override void AddTimeInPrison()
         {
             timeInPrison++;
+        }
+        public override void ResetTimeInPrison()
+        {
+            timeInPrison = 0;
         }
     }
     class Item
