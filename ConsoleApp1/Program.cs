@@ -12,7 +12,6 @@ namespace ConsoleApp1
         {
             Random random = new Random();
             var town = CreateTown(random);
-            List<Person> prison = new List<Person>();
             var numberInPrison = 0;
 
             while (true)
@@ -27,9 +26,9 @@ namespace ConsoleApp1
 
                 }
 
-                Collision(town, prison, numberInPrison);
+                Collision(town, numberInPrison);
 
-                foreach (var personInPrison in prison)
+                foreach (var personInPrison in town)
                 {
                     var personPrisonTime = personInPrison.GetTimeInPrison();
 
@@ -69,7 +68,7 @@ namespace ConsoleApp1
                 Console.Clear();
             }
         }
-        private static void Collision(List<Person>town , List<Person>prison, int numberInPrison)
+        private static void Collision(List<Person>town , int numberInPrison)
         {
             bool collision = false;
 
@@ -109,7 +108,7 @@ namespace ConsoleApp1
                                     {
                                         personTwo.RemoveItem(copyOfInventory[i]);
                                     }
-                                    prison.Add(personTwo);
+
                                     personTwo.inPrison = true;
                                     Console.SetCursorPosition(0, 27);
                                     Console.WriteLine("Police put a thief in to prison!");
