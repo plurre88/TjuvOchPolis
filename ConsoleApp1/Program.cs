@@ -35,6 +35,8 @@ namespace ConsoleApp1
         }
         private static void Collision(List<Person>town)
         {
+            bool collision = false;
+
             foreach (var personOne in town)
             {
                 foreach (var personTwo in town)
@@ -53,8 +55,8 @@ namespace ConsoleApp1
                                     personOne.AddItem(stolenItem);
                                     personTwo.RemoveItem(stolenItem);
                                     Console.SetCursorPosition(0, 27);
-                                    Console.WriteLine("Polis krockar med tjuv");
-                                    Thread.Sleep(1750);
+                                    Console.WriteLine("Thief stole item from citizen");
+                                    collision = true;
                                 }
                             }
                             else if (personOne is Police && personTwo is Thief)
@@ -72,20 +74,48 @@ namespace ConsoleApp1
                                         personTwo.RemoveItem(copyOfInventory[i]);
                                     }
                                     Console.SetCursorPosition(0, 27);
-                                    Console.WriteLine("Polis krockar med tjuv");
-                                    Thread.Sleep(1750);
+                                    Console.WriteLine("Police took a thief");
+                                    collision = true;
                                 }
                             }
                         }
                     }
                 }
             }
+            if (collision)
+            {
+                int citItems = 0;
+                int thiefItems = 0;
+                int policeItems = 0;
+
+                foreach (var person in town)
+                {
+                    if (person is Citizen)
+                    {
+                        citItems += person.GetListSize();
+                    }
+                    else if (person is Thief)
+                    {
+                        thiefItems += person.GetListSize();
+                    }
+                    else if (person is Police)
+                    {
+                        policeItems += person.GetListSize();
+                    }
+                }
+
+                Console.SetCursorPosition(0, 28);
+                Console.WriteLine($"Citizen:{citItems}");
+                Console.WriteLine($"Thief:{thiefItems}");
+                Console.WriteLine($"Police:{policeItems}");
+                Thread.Sleep(2000);
+            }
         }
         private static List<Person> CreateTown(Random random)
         {
-            int numberOfCitizen = 3;
-            int numberOfPolice = 3;
-            int numberOfThief = 3;
+            int numberOfCitizen = 15;
+            int numberOfPolice = 15;
+            int numberOfThief = 15;
 
             List<Person> town = new List<Person>();
 
@@ -170,6 +200,10 @@ namespace ConsoleApp1
         {
 
         }
+        public virtual int GetListSize()
+        {
+            return 0;
+        }
     }
     class Citizen : Person
     {
@@ -198,6 +232,10 @@ namespace ConsoleApp1
         {
             inventory.Remove(item);
         }
+        public override int GetListSize()
+        {
+            return inventory.Count;
+        }
     }
     class Police : Person
     {
@@ -205,7 +243,7 @@ namespace ConsoleApp1
 
         public Police(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
-            List<Item> confiscated = new List<Item>();
+            confiscated = new List<Item>();
         }
         public override void AddItem(Item item)
         {
@@ -215,6 +253,10 @@ namespace ConsoleApp1
         {
             confiscated.Remove(item);
         }
+        public override int GetListSize()
+        {
+            return confiscated.Count;
+        }
     }
     class Thief : Person
     {
@@ -222,7 +264,7 @@ namespace ConsoleApp1
 
         public Thief(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
-            List<Item> loot = new List<Item>();
+            loot = new List<Item>();
         }
         public override List<Item> CopyInventory()
         {
@@ -235,6 +277,10 @@ namespace ConsoleApp1
         public override void RemoveItem(Item item)
         {
             loot.Remove(item);
+        }
+        public override int GetListSize()
+        {
+            return loot.Count;
         }
     }
     class Item
