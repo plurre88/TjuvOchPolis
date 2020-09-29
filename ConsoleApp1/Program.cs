@@ -34,20 +34,22 @@ namespace ConsoleApp1
 
                     if (personInPrison.inPrison)
                     {
-                        if (personPrisonTime < 15)
+                        if (personPrisonTime < 30)
                         {
                             Console.SetCursorPosition(0, 27);
                             Console.WriteLine($"Prison:{numberInPrison}");
-                            Console.WriteLine($"Time in prison {personPrisonTime * 2} sekunder.");
+                            Console.WriteLine($"Time in prison {personPrisonTime} sekunder.");
                             personInPrison.AddTimeInPrison();
-                            Thread.Sleep(250);
+                            Thread.Sleep(300);
                         }
                         else
                         {
                             Console.SetCursorPosition(0, 27);
+                            Console.WriteLine($"Time in prison {personPrisonTime} sekunder.");
                             Console.WriteLine("Thife are now free from prison.");
                             personInPrison.inPrison = false;
                             personInPrison.ResetTimeInPrison();
+                            Thread.Sleep(500);
                         }
                     }
                 }
@@ -64,7 +66,7 @@ namespace ConsoleApp1
                     }
                 }
 
-                Thread.Sleep(150);
+                Thread.Sleep(300);
                 Console.Clear();
             }
         }
@@ -147,7 +149,7 @@ namespace ConsoleApp1
                 Console.WriteLine($"Thief:{thiefItems}");
                 Console.WriteLine($"Police:{policeItems}");
 
-                Thread.Sleep(1600);
+                Thread.Sleep(1500);
             }
         }
         private static List<Person> CreateTown(Random random)
