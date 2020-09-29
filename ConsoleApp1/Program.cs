@@ -12,6 +12,7 @@ namespace ConsoleApp1
         {
             Random random = new Random();
             var town = CreateTown(random);
+            List<Person> prison = new List<Person>();
 
             while (true)
             {
@@ -22,7 +23,26 @@ namespace ConsoleApp1
 
                 }
 
-                Collision(town);
+                Collision(town, prison);
+
+                foreach (var personInPrison in prison)
+                {
+                    var personPrisonTime = personInPrison.GetTimeInPrison();
+
+                    if (personPrisonTime < 15)
+                    {
+                        Console.WriteLine($"Time in prison {personPrisonTime * 2} sekunder.");
+                        personInPrison.AddTimeInPrison();
+                        Thread.Sleep(250);
+                    }
+                    else
+                    {
+                        Console.SetCursorPosition(0, 27);
+                        Console.WriteLine("Thife are now free from prison.");
+                        town.Add(personInPrison);
+                        prison.Remove(personInPrison);
+                    }
+                }
 
                 foreach (var person in town)
                 {
@@ -33,7 +53,7 @@ namespace ConsoleApp1
                 Console.Clear();
             }
         }
-        private static void Collision(List<Person>town)
+        private static void Collision(List<Person>town , List<Person>prison)
         {
             bool collision = false;
 
@@ -55,7 +75,7 @@ namespace ConsoleApp1
                                     personOne.AddItem(stolenItem);
                                     personTwo.RemoveItem(stolenItem);
                                     Console.SetCursorPosition(0, 27);
-                                    Console.WriteLine("Thief stole item from citizen");
+                                    Console.WriteLine("Thief stole item from citizen!");
                                     collision = true;
                                 }
                             }
@@ -73,8 +93,10 @@ namespace ConsoleApp1
                                     {
                                         personTwo.RemoveItem(copyOfInventory[i]);
                                     }
+                                    prison.Add(personTwo);
+                                    town.Remove(personTwo);
                                     Console.SetCursorPosition(0, 27);
-                                    Console.WriteLine("Police took a thief");
+                                    Console.WriteLine("Police put a thief in to prison!");
                                     collision = true;
                                 }
                             }
@@ -105,10 +127,12 @@ namespace ConsoleApp1
                 }
 
                 Console.SetCursorPosition(0, 28);
+                Console.WriteLine($"Prison:{prison.Count}");
                 Console.WriteLine($"Citizen:{citItems}");
                 Console.WriteLine($"Thief:{thiefItems}");
                 Console.WriteLine($"Police:{policeItems}");
-                Thread.Sleep(2000);
+
+                Thread.Sleep(1600);
             }
         }
         private static List<Person> CreateTown(Random random)
@@ -204,6 +228,14 @@ namespace ConsoleApp1
         {
             return 0;
         }
+        public virtual int GetTimeInPrison()
+        {
+            return 0;
+        }
+        public virtual void AddTimeInPrison()
+        {
+
+        }
     }
     class Citizen : Person
     {
@@ -261,10 +293,12 @@ namespace ConsoleApp1
     class Thief : Person
     {
         public List<Item> loot { get; set; }
+        public int timeInPrison { get; set; }
 
         public Thief(string name, Position Pxy, Direction Dxy) : base(name, Pxy, Dxy)
         {
             loot = new List<Item>();
+            timeInPrison = 0;
         }
         public override List<Item> CopyInventory()
         {
@@ -281,6 +315,14 @@ namespace ConsoleApp1
         public override int GetListSize()
         {
             return loot.Count;
+        }
+        public override int GetTimeInPrison()
+        {
+            return timeInPrison;
+        }
+        public override void AddTimeInPrison()
+        {
+            timeInPrison++;
         }
     }
     class Item
