@@ -16,63 +16,35 @@ namespace ConsoleApp1
 
             while (true)
             {
-                foreach (var person in town)
-                {
-                    if (!person.inPrison)
-                    {
-                        Console.SetCursorPosition(person.position.x, person.position.y);
-                        Console.WriteLine(person.name);
-                    }
-
-                }
+                
+                PrintOutPersons(town);
 
                 Collision(town, numberInPrison);
 
-                foreach (var personInPrison in town)
-                {
-                    var personPrisonTime = personInPrison.GetTimeInPrison();
+                CountPrisonTime(town, numberInPrison);
 
-                    if (personInPrison.inPrison)
-                    {
-                        if (personPrisonTime < 30)
-                        {
-                            Console.SetCursorPosition(0, 27);
-                            Console.WriteLine($"Prison:{numberInPrison}");
-                            Console.WriteLine($"Time in prison {personPrisonTime} sekunder.");
-                            personInPrison.AddTimeInPrison();
-                            Thread.Sleep(300);
-                        }
-                        else
-                        {
-                            Console.SetCursorPosition(0, 27);
-                            Console.WriteLine($"Time in prison {personPrisonTime} sekunder.");
-                            Console.WriteLine("Thife are now free from prison.");
-                            personInPrison.inPrison = false;
-                            personInPrison.ResetTimeInPrison();
-                            Thread.Sleep(500);
-                        }
-                    }
-                }
-                numberInPrison = 0;
-                foreach (var person in town)
-                {
-                    if (!person.inPrison)
-                    {
-                        MovePerson(person);
-                    }
-                    else if (person.inPrison)
-                    {
-                        numberInPrison++;
-                    }
-                }
+                numberInPrison = CountPrisonerAndMove(town, numberInPrison);
 
-                Thread.Sleep(300);
+                WriteOutInfo(town, numberInPrison);
+
+                Thread.Sleep(500);
                 Console.Clear();
+            }
+        }
+        private static void PrintOutPersons(List<Person> town)
+        {
+            foreach (var person in town)
+            {
+                if (!person.inPrison)
+                {
+                    Console.SetCursorPosition(person.position.x, person.position.y);
+                    Console.WriteLine(person.name);
+                }
+
             }
         }
         private static void Collision(List<Person>town , int numberInPrison)
         {
-            bool collision = false;
 
             foreach (var personOne in town)
             {
@@ -93,7 +65,8 @@ namespace ConsoleApp1
                                     personTwo.RemoveItem(stolenItem);
                                     Console.SetCursorPosition(0, 27);
                                     Console.WriteLine("Thief stole item from citizen!");
-                                    collision = true;
+                                    Thread.Sleep(1000);
+
                                 }
                             }
                             else if (personOne is Police && personTwo is Thief)
@@ -114,43 +87,83 @@ namespace ConsoleApp1
                                     personTwo.inPrison = true;
                                     Console.SetCursorPosition(0, 27);
                                     Console.WriteLine("Police put a thief in to prison!");
-                                    collision = true;
+                                    Thread.Sleep(1000);
+
                                 }
                             }
                         }
                     }
                 }
             }
-            if (collision)
+        }
+        private static void CountPrisonTime(List<Person>town, int numberInPrison)
+        {
+            foreach (var personInPrison in town)
             {
-                int citItems = 0;
-                int thiefItems = 0;
-                int policeItems = 0;
+                var personPrisonTime = personInPrison.GetTimeInPrison();
 
-                foreach (var person in town)
+                if (personInPrison.inPrison)
                 {
-                    if (person is Citizen)
+                    if (personPrisonTime < 30)
                     {
-                        citItems += person.GetListSize();
+                        Console.SetCursorPosition(0, 27);
+                        Console.WriteLine($"Time in prison {personPrisonTime} seconds.");
+                        personInPrison.AddTimeInPrison();
                     }
-                    else if (person is Thief)
+                    else
                     {
-                        thiefItems += person.GetListSize();
-                    }
-                    else if (person is Police)
-                    {
-                        policeItems += person.GetListSize();
+                        Console.SetCursorPosition(0, 27);
+                        Console.WriteLine($"Thife are now free after {personPrisonTime} seconds in prison.");
+                        personInPrison.inPrison = false;
+                        personInPrison.ResetTimeInPrison();
+                        Thread.Sleep(700);
                     }
                 }
-
-                Console.SetCursorPosition(0, 28);
-                Console.WriteLine($"Prison:{numberInPrison}");
-                Console.WriteLine($"Citizen:{citItems}");
-                Console.WriteLine($"Thief:{thiefItems}");
-                Console.WriteLine($"Police:{policeItems}");
-
-                Thread.Sleep(1500);
             }
+        }
+        private static int CountPrisonerAndMove(List<Person> town, int numberInPrison)
+        {
+            numberInPrison = 0;
+            foreach (var person in town)
+            {
+                if (!person.inPrison)
+                {
+                    MovePerson(person);
+                }
+                else if (person.inPrison)
+                {
+                    numberInPrison++;
+                }
+            }
+            return numberInPrison;
+        }
+        private static void WriteOutInfo(List<Person> town, int numberInPrison)
+        {
+            int citItems = 0;
+            int thiefItems = 0;
+            int policeItems = 0;
+
+            foreach (var person in town)
+            {
+                if (person is Citizen)
+                {
+                    citItems += person.GetListSize();
+                }
+                else if (person is Thief)
+                {
+                    thiefItems += person.GetListSize();
+                }
+                else if (person is Police)
+                {
+                    policeItems += person.GetListSize();
+                }
+            }
+
+            Console.SetCursorPosition(0, 28);
+            Console.WriteLine($"Prisoners:{numberInPrison}");
+            Console.WriteLine($"Citizen number of items:{citItems}");
+            Console.WriteLine($"Thief number of items:{thiefItems}");
+            Console.WriteLine($"Police number of items:{policeItems}");
         }
         private static List<Person> CreateTown(Random random)
         {
