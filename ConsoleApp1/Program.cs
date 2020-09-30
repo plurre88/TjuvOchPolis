@@ -10,6 +10,8 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
+            Console.SetWindowSize(106,33);
+
             Random random = new Random();
             var town = CreateTown(random);
             var numberInPrison = 0;
@@ -19,7 +21,7 @@ namespace ConsoleApp1
                 
                 PrintOutPersons(town);
 
-                Collision(town, numberInPrison);
+                Collision(town, numberInPrison, random);
 
                 CountPrisonTime(town, numberInPrison);
 
@@ -43,9 +45,9 @@ namespace ConsoleApp1
 
             }
         }
-        private static void Collision(List<Person>town , int numberInPrison)
+        private static void Collision(List<Person>town , int numberInPrison, Random random)
         {
-
+            
             foreach (var personOne in town)
             {
                 foreach (var personTwo in town)
@@ -60,7 +62,8 @@ namespace ConsoleApp1
 
                                 if (copyOfInventory.Count > 0)
                                 {
-                                    var stolenItem = copyOfInventory[0];
+                                    
+                                    var stolenItem = copyOfInventory[random.Next(0, copyOfInventory.Count)];
                                     personOne.AddItem(stolenItem);
                                     personTwo.RemoveItem(stolenItem);
                                     Console.SetCursorPosition(0, 27);
@@ -113,7 +116,7 @@ namespace ConsoleApp1
                     else
                     {
                         Console.SetCursorPosition(0, 27);
-                        Console.WriteLine($"Thife are now free after {personPrisonTime} seconds in prison.");
+                        Console.WriteLine($"Thief are now free after {personPrisonTime} seconds in prison.");
                         personInPrison.inPrison = false;
                         personInPrison.ResetTimeInPrison();
                         Thread.Sleep(700);
@@ -167,9 +170,28 @@ namespace ConsoleApp1
         }
         private static List<Person> CreateTown(Random random)
         {
-            int numberOfCitizen = 15;
-            int numberOfPolice = 15;
-            int numberOfThief = 15;
+            Console.SetCursorPosition(17,15);
+            Console.WriteLine("______________HELLO MAYOR, AND WELCOME HOME TO DOTNETVILLE______________");
+            Thread.Sleep(4700);
+            Console.SetCursorPosition(17, 15);
+            Console.WriteLine("_______BEFORE WE START THE SIMULATION WE NEED TO ADD SOM PERSONS!_______");
+            Thread.Sleep(4700);
+            Console.SetCursorPosition(17, 15);
+            Console.WriteLine("____LETS START WITH SOME CITIZEN, TYPE IN HOW MANY CITIZEN YOU WANT!____");
+            int numberOfCitizen = int.Parse(Console.ReadLine());
+            Console.Clear();
+            Console.SetCursorPosition(17, 15);
+            Console.WriteLine("________AND FOR LAW AND ORDER, TYPE IN HOW MANY POLICES YOU WANT________");
+            int numberOfPolice = int.Parse(Console.ReadLine());
+            Console.Clear();
+            Console.SetCursorPosition(17, 15);
+            Console.WriteLine("_______THE POLICES NEED TO WORK, TYPE IN HOW MANY THIEFS YOU WANT_______");
+            int numberOfThief = int.Parse(Console.ReadLine());
+            Console.Clear();
+            Console.SetCursorPosition(17, 15);
+            Console.WriteLine("________NOW WE ARE READY TO START THE SIMULATION. PRESS ANY KEY!________");
+            Console.ReadKey(true);
+            Console.Clear();
 
             List<Person> town = new List<Person>();
 
