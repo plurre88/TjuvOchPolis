@@ -40,7 +40,24 @@ namespace ConsoleApp1
                 if (!person.inPrison)
                 {
                     Console.SetCursorPosition(person.position.x, person.position.y);
-                    Console.WriteLine(person.name);
+                    if (person is Citizen)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(person.name);
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
+                    else if (person is Police)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine(person.name);
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
+                    else if (person is Thief)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(person.name);
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
                 }
 
             }
